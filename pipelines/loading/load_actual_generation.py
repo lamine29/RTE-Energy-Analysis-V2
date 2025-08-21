@@ -1,4 +1,8 @@
 # pipelines/load.py
+# Functions to load RTE API data into SQLite tables
+
+# Load actual generation per production type
+# Each entry contains start/end date, production type, and a list of values (with timestamps and value)
 def load_actual_generations_per_production_type(data, db_path, table_name="actual_generations_per_production_type"):
     import sqlite3
     from datetime import datetime
@@ -38,6 +42,8 @@ def load_actual_generations_per_production_type(data, db_path, table_name="actua
     cur.close()
     conn.close()
 
+# Load actual generation per unit
+# Each entry contains start/end date, unit info (EIC code, name), and a list of values (with timestamps and value)
 def load_actual_generations_per_unit(data, db_path, table_name="actual_generations_per_unit"):
     import sqlite3
     conn = sqlite3.connect(db_path)
@@ -80,6 +86,8 @@ def load_actual_generations_per_unit(data, db_path, table_name="actual_generatio
     cur.close()
     conn.close()
 
+# Load water reserves data
+# Each entry contains start/end date and a list of values (with timestamps and value)
 def load_water_reserves(data, db_path, table_name="water_reserves"):
     import sqlite3
     conn = sqlite3.connect(db_path)
@@ -115,6 +123,8 @@ def load_water_reserves(data, db_path, table_name="water_reserves"):
     cur.close()
     conn.close()
 
+# Load generation mix 15min time scale data
+# Each entry contains start/end date, production type/subtype, and a list of values (with timestamps and value)
 def load_generation_mix_15min_time_scale(data, db_path, table_name="generation_mix_15min_time_scale"):
     import sqlite3
     conn = sqlite3.connect(db_path)
