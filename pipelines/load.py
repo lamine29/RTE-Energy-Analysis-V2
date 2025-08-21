@@ -1,16 +1,13 @@
 # pipelines/load.py
-
 # Functions to load RTE API data into SQLite tables
 
-import sqlite3
-from datetime import datetime
-from pipelines.loading.database_connect import get_db_connection_and_cursor, close_db_connection
-
 # Load actual generation per production type
-
-
+# Each entry contains start/end date, production type, and a list of values (with timestamps and value)
 def load_actual_generations_per_production_type(data, db_path, table_name="actual_generations_per_production_type"):
-    conn, cur = get_db_connection_and_cursor(db_path)
+    import sqlite3
+    from datetime import datetime
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
     cur.execute(f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,11 +39,15 @@ def load_actual_generations_per_production_type(data, db_path, table_name="actua
             ))
     conn.commit()
     print(f"Data loaded into {table_name} successfully.")
-    close_db_connection(conn, cur)
+    cur.close()
+    conn.close()
 
 # Load actual generation per unit
+# Each entry contains start/end date, unit info (EIC code, name), and a list of values (with timestamps and value)
 def load_actual_generations_per_unit(data, db_path, table_name="actual_generations_per_unit"):
-    conn, cur = get_db_connection_and_cursor(db_path)
+    import sqlite3
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
     cur.execute(f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -82,11 +83,15 @@ def load_actual_generations_per_unit(data, db_path, table_name="actual_generatio
             ))
     conn.commit()
     print(f"Data loaded into {table_name} successfully.")
-    close_db_connection(conn, cur)
+    cur.close()
+    conn.close()
 
 # Load water reserves data
+# Each entry contains start/end date and a list of values (with timestamps and value)
 def load_water_reserves(data, db_path, table_name="water_reserves"):
-    conn, cur = get_db_connection_and_cursor(db_path)
+    import sqlite3
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
     cur.execute(f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -115,11 +120,15 @@ def load_water_reserves(data, db_path, table_name="water_reserves"):
             ))
     conn.commit()
     print(f"Data loaded into {table_name} successfully.")
-    close_db_connection(conn, cur)
+    cur.close()
+    conn.close()
 
 # Load generation mix 15min time scale data
+# Each entry contains start/end date, production type/subtype, and a list of values (with timestamps and value)
 def load_generation_mix_15min_time_scale(data, db_path, table_name="generation_mix_15min_time_scale"):
-    conn, cur = get_db_connection_and_cursor(db_path)
+    import sqlite3
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
     cur.execute(f"""
         CREATE TABLE IF NOT EXISTS {table_name} (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -154,4 +163,5 @@ def load_generation_mix_15min_time_scale(data, db_path, table_name="generation_m
             ))
     conn.commit()
     print(f"Data loaded into {table_name} successfully.")
-    close_db_connection(conn, cur)
+    cur.close()
+    conn.close()
