@@ -6,4 +6,3 @@ from datetime import datetime
 
 load_dotenv()
 
-DB_PATH = os.getenv("DB_PATH", "data/energy_analysis.db")
