@@ -1,8 +1,9 @@
-from pipelines.extraction.api_connector import APIConnector
-import sqlite3
+from Pipelines.Extract.api_connector import APIConnector    
 from dotenv import load_dotenv
 import os
 from datetime import datetime
+import json
+import date_bootstrap_helper
 
 load_dotenv()
 
@@ -16,18 +17,23 @@ def get_token(api_connector):
 # Function to fetch actual generations per production type
 
 def fetch_actual_generations_per_production_type(token, start_date, end_date, api_connector):
-    url = f"https://digital.iservices.rte-france.com/open_api/actual_generation/v1/actual_generations_per_production_type?start_date={start_date}&end_date={end_date}"
+    # Concatenate the required time and offset to the date strings
+    start_date_fmt = start_date + "T00:00:00+01:00"
+    end_date_fmt = end_date + "T00:00:00+01:00"
+    url = f"https://digital.iservices.rte-france.com/open_api/actual_generation/v1/actual_generations_per_production_type?start_date={start_date_fmt}&end_date={end_date_fmt}"
     print("Request URL:", url)
     try:
-        start_dt = datetime.strptime(start_date, "%Y-%m-%d")
-        end_dt = datetime.strptime(end_date, "%Y-%m-%d")
+        # Only for interval check, not for API call
+        start_dt = datetime.strptime(start_date[:10], "%Y-%m-%d")
+        end_dt = datetime.strptime(end_date[:10], "%Y-%m-%d")
         interval = (end_dt - start_dt).days
         if interval >= 155:
             raise ValueError(f"Interval between start_date and end_date is {interval} days, which is not allowed (must be < 155 days)")
     except Exception as e:
         print(f"Date parsing error: {e}")
         raise
-    return api_connector.get_api_response(url, token)
+    response = api_connector.get_api_response(url, token)
+    return response
 
 # Function to fetch actual generation per unit
 
@@ -43,7 +49,11 @@ def fetch_actual_generation_per_unit(token, start_date, end_date, api_connector)
     except Exception as e:
         print(f"Date parsing error: {e}")
         raise
-    return api_connector.get_api_response(url, token)
+    response = api_connector.get_api_response(url, token)
+    file_path = f"actual_generations_per_unit_{start_date}_to_{end_date}.json"
+    with open(file_path, 'w') as f:
+        json.dump(response, f)
+    return file_path
 
 # Function to fetch actual water reserves
 
@@ -63,7 +73,11 @@ def fetch_actual_water_reserves(token, start_date, end_date, api_connector):
     except Exception as e:
         print(f"Date parsing error: {e}")
         raise
-    return api_connector.get_api_response(url, token)
+    response = api_connector.get_api_response(url, token)
+    file_path = f"actual_water_reserves_{start_date}_to_{end_date}.json"
+    with open(file_path, 'w') as f:
+        json.dump(response, f)
+    return file_path
 
 # Function to fetch actual generation mix 15 min time scale
 
@@ -79,4 +93,8 @@ def fetch_actual_generation_mix_15_min_time_scale(token, start_date, end_date, a
     except Exception as e:
         print(f"Date parsing error: {e}")
         raise
-    return api_connector.get_api_response(url, token)
+    response = api_connector.get_api_response(url, token)
+    file_path = f"actual_generation_mix_15min_time_scale_{start_date}_to_{end_date}.json"
+    with open(file_path, 'w') as f:
+        json.dump(response, f)
+    return file_path

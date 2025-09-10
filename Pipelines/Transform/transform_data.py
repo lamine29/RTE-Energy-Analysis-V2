@@ -23,5 +23,5 @@ def transform_bronze_json_to_csv(bronze_dir="data/bronze_data", csv_dir="data/si
             if not isinstance(data, list):
                 print(f"Skipping {filename}: not a list of records.")
                 continue
-            move_csv_to_silver(data, filename, csv_dir)
-    print("All CSV files are now ready in the silver_data folder.")
+            # move_csv_to_silver(data, filename, csv_dir)  # No longer called here
+    print("All CSV files are now ready to be moved in the silver_data folder.")
