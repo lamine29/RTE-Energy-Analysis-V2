@@ -119,11 +119,36 @@ Reports on outages, maintenance, and other events affecting energy production un
 
 Refer to the RTE Open Data API documentation for endpoint details, authentication, and recommended call intervals.
 
+---
+
+## Data Extraction and Loading Logic
+
+The data pipeline follows a multi-stage approach to ensure data integrity and flexibility for downstream analysis:
+
+1. **Extraction to Bronze Layer (Semi-Structured JSON):**
+   - All raw data is first extracted from the RTE APIs and saved as JSON files (semi-structured format). This forms the "bronze" layer, preserving the original structure and details of the API responses for traceability and reprocessing if needed.
+
+2. **Transformation to Silver Layer (Structured CSV, Still Bronze):**
+   - The JSON files from the bronze layer are then parsed and transformed into structured CSV files. These CSV files are still considered part of the bronze layer, as they represent semi-processed data that is not yet fully integrated into the analytics system. This step standardizes the data, making it easier to analyze and load into relational databases.
+
+3. **Loading into Database (Gold Layer):**
+   - The structured CSV files (bronze) are loaded into the SQLite database. Once the data is in the database, it is considered to be in the "gold" layer. This final step enables efficient querying, aggregation, and integration with visualization tools like Streamlit.
+
+This multi-layer approach (Bronze → Gold) ensures that raw and semi-processed data is always available for reprocessing, while also providing clean, structured data for analytics and reporting.
+
+---
+
 ## API Calls Recommendation
-- **Actual Generation Per production type:** One call per hour for 155 days interval. First date: 15/12/2014
-- **Actual Generation Per Unit:** One call per hour with an intervall of 7 days intervals. First data : 13/12/2011
-- **Water Reserve:** One Call per week on wednesday and 1 year call
--**mix_15_min_time_scale** : Intervalle of 14 days
+
+- **Actual Generation Per production type:** One call per hour for 155 days interval. First date: 15/12/2014. The API response is saved as a JSON file for each call.
+
+- **Actual Generation Per Unit:** One call per hour with an interval of 7 days. First data: 13/12/2011. The API response is saved as a JSON file for each call.
+
+- **Water Reserve:** One call per week on Wednesday and 1 year call. The API response is saved as a JSON file for each call.
+
+- **mix_15_min_time_scale:** Interval of 14 days. The API response is saved as a JSON file for each call.
+
+All API responses are stored as JSON files for further processing and analysis.
 
 ---
 
