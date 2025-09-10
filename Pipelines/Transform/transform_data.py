@@ -1,7 +1,7 @@
 import os
 import json
 import pandas as pd
-from Pipelines.Load.load_data import move_csv_to_silver
+from Pipelines.Load.load_data_helper import move_csv_to_silver
 
 def transform_bronze_json_to_csv(bronze_dir="data/bronze_data", csv_dir="data/silver_data"):
     """

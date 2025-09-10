@@ -1,157 +1,62 @@
-# pipelines/load.py
+from Pipelines.Extract.exctract_actual_generation import fetch_actual_generations_per_production_type, get_token, fetch_actual_generation_per_unit, fetch_actual_water_reserves, fetch_actual_generation_mix_15_min_time_scale
+from Pipelines.Extract.api_connector import APIConnector
+from Pipelines.Load.load_data_helper import save_api_response_to_bronze
+from Pipelines.Extract.date_bootstrap_helper import generate_trimester_table, generate_week_table, generate_year_table, generate_biweekly_table
+import os
 
-# Functions to load RTE API data into SQLite tables
+# Load actual generation per production type for each trimester and save as JSON in bronze folder
+def load_actual_generations_per_production_type(token, api_connector, start_date):
+    # Always use this folder structure
+    abs_dir = os.path.abspath("data/bronze_data/actual_generations_per_production_type")
+    trimester_table = generate_trimester_table(start_date)
+    os.makedirs(abs_dir, exist_ok=True)
+    for _, row in trimester_table.iterrows():
+        t_start = row['start_date']
+        t_end = row['end_date']
+        print(f"Fetching data for trimester: {t_start} to {t_end}")
+        response = fetch_actual_generations_per_production_type(token, t_start[:10], t_end[:10], api_connector)
+        filename = f"actual_generations_per_production_type_{t_start}_to_{t_end}"
+        save_api_response_to_bronze(response, filename, bronze_dir=abs_dir)
+        print(f"Saved: {filename}.json in {abs_dir}")
 
-import sqlite3
-from datetime import datetime
-from pipelines.loading.database_connect import get_db_connection_and_cursor, close_db_connection
+# Load actual generation per unit for each week and save as JSON in bronze folder
+def load_actual_generations_per_unit(token, api_connector, start_date):
+    abs_dir = os.path.abspath("data/bronze_data/actual_generations_per_unit")
+    week_table = generate_week_table(start_date)
+    os.makedirs(abs_dir, exist_ok=True)
+    for _, row in week_table.iterrows():
+        w_start = row['start_date']
+        w_end = row['end_date']
+        print(f"Fetching data for week: {w_start} to {w_end}")
+        response = fetch_actual_generation_per_unit(token, w_start[:10], w_end[:10], api_connector)
+        filename = f"actual_generations_per_unit_{w_start}_to_{w_end}"
+        save_api_response_to_bronze(response, filename, bronze_dir=abs_dir)
+        print(f"Saved: {filename}.json in {abs_dir}")
 
-# Load actual generation per production type
+# Load actual water reserves for each year and save as JSON in bronze folder
+def load_actual_water_reserves(token, api_connector, start_date):
+    abs_dir = os.path.abspath("data/bronze_data/actual_water_reserves")
+    year_table = generate_year_table(start_date)
+    os.makedirs(abs_dir, exist_ok=True)
+    for _, row in year_table.iterrows():
+        y_start = row['start_date']
+        y_end = row['end_date']
+        print(f"Fetching water reserves for year: {y_start} to {y_end}")
+        response = fetch_actual_water_reserves(token, y_start[:10], y_end[:10], api_connector)
+        filename = f"actual_water_reserves_{y_start}_to_{y_end}"
+        save_api_response_to_bronze(response, filename, bronze_dir=abs_dir)
+        print(f"Saved: {filename}.json in {abs_dir}")
 
-
-def load_actual_generations_per_production_type(data, db_path, table_name="actual_generations_per_production_type"):
-    conn, cur = get_db_connection_and_cursor(db_path)
-    cur.execute(f"""
-        CREATE TABLE IF NOT EXISTS {table_name} (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            start_date TEXT,
-            end_date TEXT,
-            production_type TEXT,
-            value_start_date TEXT,
-            value_end_date TEXT,
-            value INTEGER,
-            updated_date TEXT
-        );
-    """)
-    for entry in data.get("actual_generations_per_production_type", []):
-        start_date = entry.get("start_date")
-        end_date = entry.get("end_date")
-        production_type = entry.get("production_type")
-        for v in entry.get("values", []):
-            cur.execute(f"""
-                INSERT INTO {table_name} (start_date, end_date, production_type, value_start_date, value_end_date, value, updated_date)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (
-                start_date,
-                end_date,
-                production_type,
-                v.get("start_date"),
-                v.get("end_date"),
-                v.get("value"),
-                v.get("updated_date")
-            ))
-    conn.commit()
-    print(f"Data loaded into {table_name} successfully.")
-    close_db_connection(conn, cur)
-
-# Load actual generation per unit
-def load_actual_generations_per_unit(data, db_path, table_name="actual_generations_per_unit"):
-    conn, cur = get_db_connection_and_cursor(db_path)
-    cur.execute(f"""
-        CREATE TABLE IF NOT EXISTS {table_name} (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            start_date TEXT,
-            end_date TEXT,
-            eic_code TEXT,
-            unit_name TEXT,
-            value_start_date TEXT,
-            value_end_date TEXT,
-            value INTEGER,
-            updated_date TEXT
-        );
-    """)
-    for entry in data.get("actual_generations_per_unit", []):
-        start_date = entry.get("start_date")
-        end_date = entry.get("end_date")
-        unit = entry.get("unit", {})
-        eic_code = unit.get("eic_code")
-        unit_name = unit.get("name")
-        for v in entry.get("values", []):
-            cur.execute(f"""
-                INSERT INTO {table_name} (start_date, end_date, eic_code, unit_name, value_start_date, value_end_date, value, updated_date)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                start_date,
-                end_date,
-                eic_code,
-                unit_name,
-                v.get("start_date"),
-                v.get("end_date"),
-                v.get("value"),
-                v.get("updated_date")
-            ))
-    conn.commit()
-    print(f"Data loaded into {table_name} successfully.")
-    close_db_connection(conn, cur)
-
-# Load water reserves data
-def load_water_reserves(data, db_path, table_name="water_reserves"):
-    conn, cur = get_db_connection_and_cursor(db_path)
-    cur.execute(f"""
-        CREATE TABLE IF NOT EXISTS {table_name} (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            start_date TEXT,
-            end_date TEXT,
-            value_start_date TEXT,
-            value_end_date TEXT,
-            value INTEGER,
-            updated_date TEXT
-        );
-    """)
-    for entry in data.get("water_reserves", []):
-        start_date = entry.get("start_date")
-        end_date = entry.get("end_date")
-        for v in entry.get("values", []):
-            cur.execute(f"""
-                INSERT INTO {table_name} (start_date, end_date, value_start_date, value_end_date, value, updated_date)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (
-                start_date,
-                end_date,
-                v.get("start_date"),
-                v.get("end_date"),
-                v.get("value"),
-                v.get("updated_date")
-            ))
-    conn.commit()
-    print(f"Data loaded into {table_name} successfully.")
-    close_db_connection(conn, cur)
-
-# Load generation mix 15min time scale data
-def load_generation_mix_15min_time_scale(data, db_path, table_name="generation_mix_15min_time_scale"):
-    conn, cur = get_db_connection_and_cursor(db_path)
-    cur.execute(f"""
-        CREATE TABLE IF NOT EXISTS {table_name} (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            start_date TEXT,
-            end_date TEXT,
-            production_type TEXT,
-            production_subtype TEXT,
-            value_start_date TEXT,
-            value_end_date TEXT,
-            value INTEGER,
-            updated_date TEXT
-        );
-    """)
-    for entry in data.get("generation_mix_15min_time_scale", []):
-        start_date = entry.get("start_date")
-        end_date = entry.get("end_date")
-        production_type = entry.get("production_type")
-        production_subtype = entry.get("production_subtype")
-        for v in entry.get("values", []):
-            cur.execute(f"""
-                INSERT INTO {table_name} (start_date, end_date, production_type, production_subtype, value_start_date, value_end_date, value, updated_date)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                start_date,
-                end_date,
-                production_type,
-                production_subtype,
-                v.get("start_date"),
-                v.get("end_date"),
-                v.get("value"),
-                v.get("updated_date")
-            ))
-    conn.commit()
-    print(f"Data loaded into {table_name} successfully.")
-    close_db_connection(conn, cur)
+# Load actual generation mix 15min for each bi-week and save as JSON in bronze folder
+def load_actual_generation_mix_15min_time_scale(token, api_connector, start_date):
+    abs_dir = os.path.abspath("data/bronze_data/actual_generation_mix_15min_time_scale")
+    biweekly_table = generate_biweekly_table(start_date)
+    os.makedirs(abs_dir, exist_ok=True)
+    for _, row in biweekly_table.iterrows():
+        b_start = row['start_date']
+        b_end = row['end_date']
+        print(f"Fetching generation mix 15min for biweek: {b_start} to {b_end}")
+        response = fetch_actual_generation_mix_15_min_time_scale(token, b_start[:10], b_end[:10], api_connector)
+        filename = f"actual_generation_mix_15min_time_scale_{b_start}_to_{b_end}"
+        save_api_response_to_bronze(response, filename, bronze_dir=abs_dir)
+        print(f"Saved: {filename}.json in {abs_dir}")
