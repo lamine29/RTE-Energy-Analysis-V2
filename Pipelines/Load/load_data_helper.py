@@ -4,7 +4,7 @@ import shutil
 from datetime import datetime
 import pandas as pd
 
-def save_api_response_to_bronze(api_response, api_name, bronze_dir="data/bronze_data"):
+def save_api_response_to_bronze(api_response, api_name, bronze_dir):
     """
     Save the API response as a JSON file in the bronze folder inside the data directory.
     The filename includes only the API name for traceability.
@@ -14,7 +14,13 @@ def save_api_response_to_bronze(api_response, api_name, bronze_dir="data/bronze_
     file_path = os.path.join(bronze_dir, filename)
     with open(file_path, "w") as f:
         json.dump(api_response, f, indent=2)
+    if os.path.exists(file_path):
+        print(f"JSON file successfully saved to {file_path}")
+    else:
+        print(f"Failed to save JSON file to {file_path}")
     return file_path
+
+
 
 def move_csv_to_silver(data, filename, csv_dir="data/silver_data"):
     """
@@ -26,6 +32,12 @@ def move_csv_to_silver(data, filename, csv_dir="data/silver_data"):
     csv_path = os.path.join(csv_dir, csv_filename)
     df.to_csv(csv_path, index=False)
     print(f"Transformed {filename} to {csv_filename}")
+    if os.path.exists(csv_path):
+        print(f"CSV file successfully saved to {csv_path}")
+    else:
+        print(f"Failed to save CSV file to {csv_path}")
+    print("All CSV files are moved in the silver_data folder.")
+
 
 
 
