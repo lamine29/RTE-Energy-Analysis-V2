@@ -22,7 +22,7 @@ def fetch_generation_forecast(token, start_date, end_date, api_connector):
         start_dt = datetime.strptime(start_date[:10], "%Y-%m-%d")
         end_dt = datetime.strptime(end_date[:10], "%Y-%m-%d")
         interval = (end_dt - start_dt).days
-        if interval >= 15:
+        if interval >= 155:
             raise ValueError(f"Interval between start_date and end_date is {interval} days, which is not allowed (must be < 155 days)")
     except Exception as e:
         print(f"Date parsing error: {e}")

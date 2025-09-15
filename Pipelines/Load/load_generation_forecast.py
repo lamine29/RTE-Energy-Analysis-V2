@@ -12,8 +12,8 @@ def load_generation_forecast(token, api_connector, start_date):
     for _, row in biweekly_table.iterrows():
         t_start = row['start_date']
         t_end = row['end_date']
-        print(f"Fetching data for trimester: {t_start} to {t_end}")
+        print(f"Fetching data for : {t_start} to {t_end}")
         response = fetch_generation_forecast(token, t_start[:10], t_end[:10], api_connector)
-        filename = f"actual_generations_per_production_type_{t_start}_to_{t_end}"
+        filename = f"generation_forecast_{t_start}_to_{t_end}"
         save_api_response_to_bronze(response, filename, bronze_dir=abs_dir)
         print(f"Saved: {filename}.json in {abs_dir}")
