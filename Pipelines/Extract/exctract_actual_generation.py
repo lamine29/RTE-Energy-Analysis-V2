@@ -6,8 +6,6 @@ import json
 
 load_dotenv()
 
-DB_PATH = os.getenv("DB_PATH", "data/energy_analysis.db")
-
 # Function to get token
 
 def get_token(api_connector):
