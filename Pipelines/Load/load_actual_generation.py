@@ -7,7 +7,7 @@ import os
 # Load actual generation per production type for each trimester and save as JSON in bronze folder
 def load_actual_generations_per_production_type(token, api_connector, start_date):
     # Always use this folder structure
-    abs_dir = os.path.abspath("data/bronze_data/actual_generations_per_production_type")
+    abs_dir = os.path.abspath("data/bronze_data/actual_generation/actual_generations_per_production_type")
     trimester_table = generate_trimester_table(start_date)
     os.makedirs(abs_dir, exist_ok=True)
     for _, row in trimester_table.iterrows():
@@ -21,7 +21,7 @@ def load_actual_generations_per_production_type(token, api_connector, start_date
 
 # Load actual generation per unit for each week and save as JSON in bronze folder
 def load_actual_generations_per_unit(token, api_connector, start_date):
-    abs_dir = os.path.abspath("data/bronze_data/actual_generations_per_unit")
+    abs_dir = os.path.abspath("data/bronze_data/actual_generation/actual_generations_per_unit")
     week_table = generate_week_table(start_date)
     os.makedirs(abs_dir, exist_ok=True)
     for _, row in week_table.iterrows():
@@ -35,7 +35,7 @@ def load_actual_generations_per_unit(token, api_connector, start_date):
 
 # Load actual water reserves for each year and save as JSON in bronze folder
 def load_actual_water_reserves(token, api_connector, start_date):
-    abs_dir = os.path.abspath("data/bronze_data/actual_water_reserves")
+    abs_dir = os.path.abspath("data/bronze_data/actual_generation/actual_water_reserves")
     year_table = generate_year_table(start_date)
     os.makedirs(abs_dir, exist_ok=True)
     for _, row in year_table.iterrows():
@@ -49,7 +49,7 @@ def load_actual_water_reserves(token, api_connector, start_date):
 
 # Load actual generation mix 15min for each bi-week and save as JSON in bronze folder
 def load_actual_generation_mix_15min_time_scale(token, api_connector, start_date):
-    abs_dir = os.path.abspath("data/bronze_data/actual_generation_mix_15min_time_scale")
+    abs_dir = os.path.abspath("data/bronze_data/actual_generation/actual_generation_mix_15min_time_scale")
     biweekly_table = generate_biweekly_table(start_date)
     os.makedirs(abs_dir, exist_ok=True)
     for _, row in biweekly_table.iterrows():

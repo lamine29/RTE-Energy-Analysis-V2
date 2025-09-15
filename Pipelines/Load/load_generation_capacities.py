@@ -36,7 +36,7 @@ def load_generation_capacities_per_production_unit(token, api_connector, start_d
 #load generation capacities cpc
 
 def load_generation_capacities_cpc(token, api_connector, start_date):
-    abs_dir = os.path.abspath("data/bronze_data/generation_intalled_capacities/generation_capacities_per_production_unit")
+    abs_dir = os.path.abspath("data/bronze_data/generation_intalled_capacities/generation_capacities_cpc")
     year_table = generate_week_table(start_date)
     os.makedirs(abs_dir, exist_ok=True)
     for _, row in year_table.iterrows():

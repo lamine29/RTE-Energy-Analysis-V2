@@ -16,10 +16,10 @@ if __name__ == "__main__":
 
     # Load actual generations per production type
     load_actual_generations_per_production_type(token,api_connector,start_date)
-    load_generation_forecast(token, api_connector, start_date)
-    load_actual_generations_per_unit(token, api_connector, start_date)
-    load_actual_water_reserves(token, api_connector, start_date)
-    load_actual_generation_mix_15min_time_scale(token, api_connector, start_date)
-    load_generation_capacities_per_production_type(token, api_connector, start_date)
-    load_generation_capacities_per_production_unit(token, api_connector, start_date)
-    load_generation_capacities_cpc(token, api_connector, start_date)
+    #load_generation_forecast(token, api_connector, start_date)
+    #load_actual_generations_per_unit(token, api_connector, start_date)
+    #load_actual_water_reserves(token, api_connector, start_date)
+    #load_actual_generation_mix_15min_time_scale(token, api_connector, start_date)
+    #load_generation_capacities_per_production_type(token, api_connector, start_date)
+    #load_generation_capacities_per_production_unit(token, api_connector, start_date)
+    #load_generation_capacities_cpc(token, api_connector, start_date)
