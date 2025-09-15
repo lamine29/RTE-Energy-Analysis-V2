@@ -24,7 +24,7 @@ def load_generation_capacities_per_production_unit(token, api_connector, start_d
     abs_dir = os.path.abspath("data/bronze_data/generation_intalled_capacities/generation_capacities_per_production_unit")
     year_table = generate_week_table(start_date)
     os.makedirs(abs_dir, exist_ok=True)
-    for _, row in week_table.iterrows():
+    for _, row in year_table.iterrows():
         w_start = row['start_date']
         w_end = row['end_date']
         print(f"Fetching data for : {w_start} to {w_end}")
