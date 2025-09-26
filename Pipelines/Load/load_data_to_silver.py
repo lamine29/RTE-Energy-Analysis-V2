@@ -1,7 +1,7 @@
 import os
 from Pipelines.Transform.file_transform_helper import json_to_csv
 
-def bronze_to_silver(bronze_root='data/bronze_data', silver_root='data/silver_data'):
+def load_bronze_to_silver(bronze_root='data/bronze_data', silver_root='data/silver_data'):
     """
     For each directory in bronze_root, recreate the directory structure in silver_root and
     transform all JSON files to CSV using json_to_csv.

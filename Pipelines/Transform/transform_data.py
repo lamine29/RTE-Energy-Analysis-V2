@@ -2,8 +2,9 @@ import os
 import json
 import pandas as pd
 from Pipelines.Load.load_data_helper import move_csv_to_silver
+from Pipelines.Transform.file_merger import merge_csv_files_to_gold, merge_csv_files_in_directory
 
-def transform_bronze_json_to_csv(bronze_dir="data/bronze_data", csv_dir="data/silver_data"):
+def transform_bronze_to_silver(bronze_dir="data/bronze_data", csv_dir="data/silver_data"):
     """
     Transforms all JSON files in the bronze folder into CSV files in the silver_data folder.
     Each JSON file is expected to be a list of records or a dict with a top-level list.
@@ -25,3 +26,4 @@ def transform_bronze_json_to_csv(bronze_dir="data/bronze_data", csv_dir="data/si
                 continue
             # move_csv_to_silver(data, filename, csv_dir)  # No longer called here
     print("All CSV files are now ready to be moved in the silver_data folder.")
+

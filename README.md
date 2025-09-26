@@ -151,6 +151,3 @@ This multi-layer approach (Bronze → Gold) ensures that raw and semi-processed 
 All API responses are stored as JSON files for further processing and analysis.
 
 ---
-
-
-
