@@ -12,7 +12,7 @@ if __name__ == "__main__":
     api_connector = APIConnector()
     # Get token
     token = get_token(api_connector)
-    start_date = "2025-06-01"
+    start_date = "2020-01-01"
 
     # Load actual generations per production type
     load_actual_generations_per_production_type(token,api_connector,start_date)

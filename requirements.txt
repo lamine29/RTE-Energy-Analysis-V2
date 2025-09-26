@@ -1,6 +1,7 @@
-requests
-python-dotenv
-pandas
-streamlit
-apache-airflow
-Flask-Session
+requests==2.31.0
+python-dotenv==1.0.0
+pandas==2.1.1
+streamlit==1.27.2
+Flask-Session==0.5.0
+pytest==7.4.2
+tqdm==4.66.1
