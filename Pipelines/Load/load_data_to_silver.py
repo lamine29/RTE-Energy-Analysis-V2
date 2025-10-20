@@ -1,5 +1,5 @@
 import os
-from Pipelines.Transform.file_transform_helper import json_to_csv
+from pipelines.Transform.file_transform_helper import json_to_csv
 
 def bronze_to_silver(bronze_root='data/bronze_data', silver_root='data/silver_data'):
     """

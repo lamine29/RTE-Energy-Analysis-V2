@@ -1,4 +1,4 @@
-from Pipelines.Extract.api_connector import APIConnector    
+from pipelines.Extract.api_connector import APIConnector    
 from dotenv import load_dotenv
 import os
 from datetime import datetime
