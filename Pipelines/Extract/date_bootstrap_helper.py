@@ -97,4 +97,31 @@ def generate_biweekly_table(start_date_str):
         i += 1
     return pd.DataFrame(rows)
 
+def generate_year_table_with_cpc(start_date_str):
+    # Convert start_date to datetime and get the next January 1st
+    start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+    next_year = start_date.year + 1
+    start_date = datetime(next_year, 1, 1)
+    today = datetime.now()
+    rows = []
+    i = 0
+    while True:
+        y_start = datetime(start_date.year + i, 1, 1)
+        y_end = datetime(start_date.year + i + 1, 1, 1)  # End date is January 1st of next year
+        if y_start > today:
+            break
+        # Clamp y_end to today if it exceeds today
+        y_end = min(y_end, today)
+        y_start_fmt = y_start.strftime("%Y-%m-%d") + "T00:00:00+01:00"
+        y_end_fmt = y_end.strftime("%Y-%m-%d") + "T00:00:00+01:00"
+        rows.append({
+            'year': i + 1,
+            'start_date': y_start_fmt,
+            'end_date': y_end_fmt
+        })
+        if y_end >= today:
+            break
+        i += 1
+    return pd.DataFrame(rows)
+
 

@@ -84,7 +84,7 @@ def fetch_actual_generation_mix_15_min_time_scale(token, start_date, end_date, a
     # Concatenate the required time and offset to the date strings
     start_date_fmt = start_date + "T00:00:00+01:00"
     end_date_fmt = end_date + "T00:00:00+01:00"
-    url = f"https://digital.iservices.rte-france.com/open_api/actual_generation/v1/eneration_mix_15min_time_scale?start_date={start_date_fmt}&end_date={end_date_fmt}"
+    url = f"https://digital.iservices.rte-france.com/open_api/actual_generation/v1/generation_mix_15min_time_scale?start_date={start_date_fmt}&end_date={end_date_fmt}"
     print("Request URL:", url)
     try:
         # Only for interval check, not for API call
